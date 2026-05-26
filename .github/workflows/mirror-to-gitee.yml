@@ -24,7 +24,7 @@ jobs:
           git config --global user.name "${GITEE_USER}"
           git config --global user.email "${GITEE_USER}@users.noreply.gitee.com"
 
-          git remote add gitee https://${GITEE_USER}:${GITEE_TOKEN}@gitee.com/hl4w/dank-material-shell.git
+          git remote add gitee https://${GITEE_USER}:${GITEE_TOKEN}@gitee.com/hl4w/DankMaterialShell.git
 
           # 拉取所有远程分支到本地
           git fetch --all
