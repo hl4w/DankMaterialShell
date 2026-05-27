@@ -34,7 +34,7 @@ jobs:
 
       - name:  Sync master branch
         run: |
-          git checkout master
+          git checkout -b master origin/master || git checkout master
           git merge upstream/master --no-edit
           git push origin master
           
