@@ -407,9 +407,11 @@ Item {
     property real renderedAlignedY: alignedY
     property real renderedAlignedHeight: alignedHeight
     readonly property bool renderedGeometryGrowing: alignedHeight >= renderedAlignedHeight
+    // Snap rendered geometry while the entrance morph runs so it doesn't ride a second animation.
+    readonly property bool _settlingToOpen: _fullHeight && shouldBeVisible && morphAnim.running
 
     Behavior on renderedAlignedY {
-        enabled: root.animationsEnabled && contentWindow.visible && root.shouldBeVisible
+        enabled: root.animationsEnabled && contentWindow.visible && root.shouldBeVisible && !root._settlingToOpen
         NumberAnimation {
             duration: Theme.variantDuration(root.animationDuration, root.renderedGeometryGrowing)
             easing.type: Easing.BezierSpline
@@ -418,7 +420,7 @@ Item {
     }
 
     Behavior on renderedAlignedHeight {
-        enabled: root.animationsEnabled && contentWindow.visible && root.shouldBeVisible
+        enabled: root.animationsEnabled && contentWindow.visible && root.shouldBeVisible && !root._settlingToOpen
         NumberAnimation {
             duration: Theme.variantDuration(root.animationDuration, root.renderedGeometryGrowing)
             easing.type: Easing.BezierSpline
@@ -620,6 +622,8 @@ Item {
         WlrLayershell.layer: root.effectivePopoutLayer
         WlrLayershell.exclusiveZone: -1
         WlrLayershell.keyboardFocus: {
+            if (PopoutManager.screenshotActive)
+                return WlrKeyboardFocus.None;
             if (customKeyboardFocus !== null)
                 return customKeyboardFocus;
             if (!shouldBeVisible)
@@ -729,6 +733,7 @@ Item {
                 Behavior on openProgress {
                     enabled: root.animationsEnabled
                     NumberAnimation {
+                        id: morphAnim
                         duration: Theme.variantDuration(root.animationDuration, root.shouldBeVisible)
                         easing.type: Easing.BezierSpline
                         easing.bezierCurve: root.shouldBeVisible ? root.animationEnterCurve : root.animationExitCurve
